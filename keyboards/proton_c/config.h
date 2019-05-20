@@ -36,6 +36,9 @@
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
 #define DEBOUNCE 6
 
+#define PS2_CLOCK_PIN D5
+#define PS2_DATA_PIN D4
+
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
 //#define LOCKING_SUPPORT_ENABLE
 /* Locking resynchronize hack */
