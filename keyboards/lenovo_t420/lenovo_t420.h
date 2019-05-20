@@ -28,25 +28,24 @@
  */
 #define LAYOUT( \
          k00, k01, k02, k03, k04, k05, k06, k07, k08, k09,      k0a, k0b,  \
-    k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k0b, k0c, k0d,  \
+    k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d,  \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c, k2d,  \
     k30, k31, k32, k33, k34, k35, k36, k37, k38, k39, k3a, k3b, k3c, k3d,  \
     k40,   k41, k42, k43, k44, k45, k46, k47, k48, k49, k4a, k4b,    k4c,  \
     k50,     k51, k52, k53, k54, k55, k56, k57, k58, k59, k5a,       k5b,  \
     k60, k61, k62, k63,          k64,           k65, k66, k67,             \
-                                                           k71, k72, k73,  \
-                                                           k81, k82, k83,  \
+                                                           k70, k71, k72,  \
+                                                           k73, k74, k75   \
 ) \
 { \
-    { k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, k0e, k0f }, \
-    { k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, k1e, k1f }, \
-    { k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c, k2d, k2e, k2f }, \
-    { k30, k31, k32, k33, k34, k35, k36, k37, k38, k39, k3a, k3b, k3c, k3d, k3e, k3f }, \
-    { k40, k41, k42, k43, k44, k45, k46, k47, k48, k49, k4a, k4b, k4c, k4d, k4e, k4f }, \
-    { k50, k51, k52, k53, k54, k55, k56, k57, k58, k59, k5a, k5b, k5c, k5d, k5e, k5f }, \
-    { k60, k61, k62, k63, k64, k65, k66, k67, k68, k69, k6a, k6b, k6c, k6d, k6e, k6f }, \
-    { k70, k71, k72, k73, k74, k75, k76, k77, k78, k79, k7a, k7b, k7c, k7d, k7e, k7f }, \
-    { k80, k81, k82, k83, k84, k85, k86, k87, k88, k89, k8a, k8b, k8c, k8d, k8e, k8f }, \
+    { k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, KC_NO, KC_NO, KC_NO, KC_NO }, \
+    { k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, KC_NO, KC_NO, KC_NO }, \
+    { k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c, KC_NO, KC_NO, KC_NO }, \
+    { k30, k31, k32, k33, k34, k35, k36, k37, k38, k39, k3a, k3b, k3c, KC_NO, KC_NO, KC_NO }, \
+    { k40, k41, k42, k43, k44, k45, k46, k47, k48, k49, k4a, k4b, k4c, KC_NO, KC_NO, KC_NO }, \
+    { k50, k51, k52, k53, k54, k55, k56, k57, k58, k59, k5a, k5b, KC_NO, KC_NO, KC_NO, KC_NO }, \
+    { k60, k61, k62, k63, k64, k65, k66, k67, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO }, \
+    { k70, k71, k72, k73, k74, k75, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO }, \
 }
 
 /* Qwerty

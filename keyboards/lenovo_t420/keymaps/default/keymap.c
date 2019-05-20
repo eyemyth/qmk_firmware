@@ -14,6 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
+#include "lenovo_t420.h"
 
 // Defines the keycodes used by our macros in process_record_user
 enum custom_keycodes {
@@ -23,8 +24,15 @@ enum custom_keycodes {
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT( /* Base */
-    KC_A,  KC_1,  KC_H, \
-      KC_TAB,  KC_SPC   \
+         KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A,      KC_A, KC_A,
+    KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A,
+    KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A,
+    KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A,
+    KC_A,   KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A,    KC_A,
+    KC_A,     KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A, KC_A,       KC_A,
+    KC_A, KC_A, KC_A, KC_A,          KC_A,           KC_A, KC_A, KC_A,
+                                                           KC_A, KC_A, KC_A,
+                                                           KC_A, KC_A, KC_A
   ),
 };
 
@@ -84,6 +92,4 @@ void led_set_user(uint8_t usb_led) {
  * |                                                                            | Left | Down  | Right|
  * `------------------------------------------------------------------------------------ -------------'
  */
-
-
 /* need keyboards/lenovo_t420/lenovo_t420.h before this can really happen */
