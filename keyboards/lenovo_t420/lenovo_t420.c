@@ -15,6 +15,24 @@
  */
 #include "lenovo_t420.h"
 
+
+__attribute__ ((weak))
+void matrix_init_user(void) {
+}
+
+__attribute__ ((weak))
+void matrix_scan_user(void) {
+}
+
+void matrix_init_kb(void) {
+  matrix_init_user();
+};
+
+void matrix_scan_kb(void) {
+  matrix_scan_user();
+};
+
+
 // Optional override functions below.
 // You can leave any or all of these undefined.
 // These are only required if you want to perform custom actions.
