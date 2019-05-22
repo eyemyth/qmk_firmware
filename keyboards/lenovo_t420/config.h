@@ -36,6 +36,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MATRIX_ROWS 8
 #define MATRIX_COLS 16
 
+#define DEBUG_MATRIX_SCAN_RATE
+
 /*
  * Keyboard Matrix Assignments
  *
@@ -67,8 +69,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* some movement here for a different ARM board: */
 /* https://github.com/qmk/qmk_firmware/issues/5218 */
 
+/* promising thread: */
+/* https://deskthority.net/viewtopic.php?t=12666 */
+/* https://github.com/abondis/tmk_keyboard/blob/a18defcc49a5b6f46a0da50298e4d3cda272c1d1/tmk_core/protocol/ps2_io_chibios.c */
+/* https://github.com/abondis/tmk_keyboard/blob/abondis_atreus_joystick/tmk_core/protocol/ps2_busywait.c */
+
+/* promising fork of QMK: */
+/* https://github.com/pelrun/qmk_firmware/tree/ps2-port */
+
+#define PS2_CLOCK_PIN A5
+#define PS2_DATA_PIN A4
+
+/* I have no idea what I'm doing but this does compile */
+
 /* define if matrix has ghost (lacks anti-ghosting diodes) */
 //#define MATRIX_HAS_GHOST
+
 
 /* TODO: not sure about this stuff */
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
