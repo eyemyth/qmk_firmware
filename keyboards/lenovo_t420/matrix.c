@@ -1,32 +1,157 @@
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
-#include "hal.h"
-#include "timer.h"
-#include "wait.h"
-#include "print.h"
-#include "matrix.h"
+/*
+Copyright 2012 Jun Wako <wakojun@gmail.com>
 
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include "ch.h"
+#include "hal.h"
 
 /*
- * Matt3o's WhiteFox
- * Column pins are input with internal pull-down. Row pins are output and strobe with high.
- * Key is high or 1 when it turns on.
- *
- *     col: { PTD0, PTD1, PTD4, PTD5, PTD6, PTD7, PTC1, PTC2 }
- *     row: { PTB2, PTB3, PTB18, PTB19, PTC0, PTC8, PTC9, PTC10, PTC11 }
+ * scan matrix
  */
+#include "print.h"
+#include "debug.h"
+#include "util.h"
+#include "matrix.h"
+#include "wait.h"
+
+#ifndef DEBOUNCE
+#   define DEBOUNCE 1
+#endif
+
+static uint8_t debouncing = DEBOUNCE;
+
 /* matrix state(1:on, 0:off) */
 static matrix_row_t matrix[MATRIX_ROWS];
 static matrix_row_t matrix_debouncing[MATRIX_ROWS];
-static bool debouncing = false;
-static uint16_t debouncing_time = 0;
 
+static matrix_row_t read_cols(void);
+static void init_cols(void);
+static void unselect_rows(void);
+static void select_row(uint8_t row);
+
+
+inline
+uint8_t matrix_rows(void)
+{
+    return MATRIX_ROWS;
+}
+
+inline
+uint8_t matrix_cols(void)
+{
+    return MATRIX_COLS;
+}
+
+#define LED_ON()    do { palSetPad(TEENSY_PIN13_IOPORT, TEENSY_PIN13) ;} while (0)
+#define LED_OFF()   do { palClearPad(TEENSY_PIN13_IOPORT, TEENSY_PIN13); } while (0)
+#define LED_TGL()   do { palTogglePad(TEENSY_PIN13_IOPORT, TEENSY_PIN13); } while (0)
 
 void matrix_init(void)
 {
-//debug_matrix = true;
-    /* Column(sense) */
+    // initialize row and col
+    unselect_rows();
+    init_cols();
+
+    // initialize matrix state: all keys off
+    for (uint8_t i=0; i < MATRIX_ROWS; i++) {
+        matrix[i] = 0;
+        matrix_debouncing[i] = 0;
+    }
+
+    //debug
+    debug_enable = true;
+    debug_matrix = true;
+    debug_keyboard = true;
+    LED_ON();
+    wait_ms(500);
+    LED_OFF();
+}
+
+uint8_t matrix_scan(void)
+{
+    for (uint8_t i = 0; i < MATRIX_ROWS; i++) {
+        select_row(i);
+        //wait_us(30);  // without this wait read unstable value.
+        for (uint8_t i=0; i < 1; i++) { // Loop for very short delay, wait_us is returning a 1ms delay
+            LED_TGL(); // toggle the onboard LED attached to pin 13
+        }
+        matrix_row_t cols = read_cols();
+        if (matrix_debouncing[i] != cols) {
+            matrix_debouncing[i] = cols;
+            if (debouncing) {
+                debug("bounce!: "); debug_hex(debouncing); debug("\n");
+            }
+            debouncing = DEBOUNCE;
+        }
+        unselect_rows();
+    }
+
+    if (debouncing) {
+        if (--debouncing) {
+            wait_ms(1);
+        } else {
+            for (uint8_t i = 0; i < MATRIX_ROWS; i++) {
+                matrix[i] = matrix_debouncing[i];
+            }
+        }
+    }
+
+    return 1;
+}
+
+inline
+bool matrix_is_on(uint8_t row, uint8_t col)
+{
+    return (matrix[row] & ((matrix_row_t)1<<col));
+}
+
+inline
+matrix_row_t matrix_get_row(uint8_t row)
+{
+    return matrix[row];
+}
+
+void matrix_print(void)
+{
+    print("\nr/c 0123456789ABCDEF\n");
+    for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
+        phex(row); print(": ");
+        pbin_reverse16(matrix_get_row(row));
+        print("\n");
+    }
+}
+
+
+/* TODO: all of the below will need to be updated */
+/* It's the col/row setup for teensy */
+/* mine will have 8 rows and 16 columns */
+/* i think the below is correct */
+
+/* 8 inputpins: */
+/* [8, 9, 10, 11, 12, 15, 16, 17] */
+
+/* 16 outputins: */
+/* [1, 2, 3, 4, 5, 6, 7, 20, 21, 22, 24, 25, 26, 31, 32, 33] */
+
+
+/* Column pin configuration
+ */
+static void  init_cols(void)
+{
+    // internal pull-up
     palSetPadMode(TEENSY_PIN1_IOPORT, TEENSY_PIN1, PAL_MODE_INPUT_PULLUP);
     palSetPadMode(TEENSY_PIN2_IOPORT, TEENSY_PIN2, PAL_MODE_INPUT_PULLUP);
     palSetPadMode(TEENSY_PIN3_IOPORT, TEENSY_PIN3, PAL_MODE_INPUT_PULLUP);
@@ -43,44 +168,12 @@ void matrix_init(void)
     palSetPadMode(TEENSY_PIN31_IOPORT, TEENSY_PIN31, PAL_MODE_INPUT_PULLUP);
     palSetPadMode(TEENSY_PIN32_IOPORT, TEENSY_PIN32, PAL_MODE_INPUT_PULLUP);
     palSetPadMode(TEENSY_PIN33_IOPORT, TEENSY_PIN33, PAL_MODE_INPUT_PULLUP);
-
-    /* Row(strobe) */
-    palSetPadMode(TEENSY_PIN8_IOPORT, TEENSY_PIN8,  PAL_MODE_OUTPUT_PUSHPULL);
-    palSetPadMode(TEENSY_PIN9_IOPORT, TEENSY_PIN9,  PAL_MODE_OUTPUT_PUSHPULL);
-    palSetPadMode(TEENSY_PIN10_IOPORT, TEENSY_PIN10, PAL_MODE_OUTPUT_PUSHPULL);
-    palSetPadMode(TEENSY_PIN11_IOPORT, TEENSY_PIN11, PAL_MODE_OUTPUT_PUSHPULL);
-    palSetPadMode(TEENSY_PIN12_IOPORT, TEENSY_PIN12, PAL_MODE_OUTPUT_PUSHPULL);
-    palSetPadMode(TEENSY_PIN15_IOPORT, TEENSY_PIN15, PAL_MODE_OUTPUT_PUSHPULL);
-    palSetPadMode(TEENSY_PIN16_IOPORT, TEENSY_PIN16, PAL_MODE_OUTPUT_PUSHPULL);
-    palSetPadMode(TEENSY_PIN17_IOPORT, TEENSY_PIN17, PAL_MODE_OUTPUT_PUSHPULL);
-
-    memset(matrix, 0, MATRIX_ROWS * sizeof(matrix_row_t));
-    memset(matrix_debouncing, 0, MATRIX_ROWS * sizeof(matrix_row_t));
-
-    matrix_init_quantum();
 }
 
-uint8_t matrix_scan(void)
+/* Returns status of switches(1:on, 0:off) */
+static matrix_row_t read_cols(void)
 {
-    for (int row = 0; row < MATRIX_ROWS; row++) {
-        matrix_row_t data = 0;
-
-        // strobe row
-        switch (row) {
-            case 0: palSetPad(TEENSY_PIN8_IOPORT,  TEENSY_PIN8);    break;
-            case 1: palSetPad(TEENSY_PIN9_IOPORT,  TEENSY_PIN9);    break;
-            case 2: palSetPad(TEENSY_PIN10_IOPORT, TEENSY_PIN10);   break;
-            case 3: palSetPad(TEENSY_PIN11_IOPORT, TEENSY_PIN11);   break;
-            case 4: palSetPad(TEENSY_PIN12_IOPORT, TEENSY_PIN12);   break;
-            case 5: palSetPad(TEENSY_PIN15_IOPORT, TEENSY_PIN15);   break;
-            case 6: palSetPad(TEENSY_PIN16_IOPORT, TEENSY_PIN16);   break;
-            case 7: palSetPad(TEENSY_PIN17_IOPORT, TEENSY_PIN17);   break;
-        }
-
-        wait_us(20); // need wait to settle pin state
-
-        // read col data
-        data = ((palReadPad(TEENSY_PIN1_IOPORT, TEENSY_PIN1)==PAL_HIGH) ? 0 : (1<<0))
+    return ((palReadPad(TEENSY_PIN1_IOPORT, TEENSY_PIN1)==PAL_HIGH) ? 0 : (1<<0))
          | ((palReadPad(TEENSY_PIN2_IOPORT, TEENSY_PIN2)==PAL_HIGH) ? 0 : (1<<1))
          | ((palReadPad(TEENSY_PIN3_IOPORT, TEENSY_PIN3)==PAL_HIGH) ? 0 : (1<<2))
          | ((palReadPad(TEENSY_PIN4_IOPORT, TEENSY_PIN4)==PAL_HIGH) ? 0 : (1<<3))
@@ -96,58 +189,58 @@ uint8_t matrix_scan(void)
          | ((palReadPad(TEENSY_PIN31_IOPORT, TEENSY_PIN31)==PAL_HIGH) ? 0 : (1<<13))
          | ((palReadPad(TEENSY_PIN32_IOPORT, TEENSY_PIN32)==PAL_HIGH) ? 0 : (1<<14))
          | ((palReadPad(TEENSY_PIN33_IOPORT, TEENSY_PIN33)==PAL_HIGH) ? 0 : (1<<15));
-
-        // un-strobe row
-        switch (row) {
-            case 0: palClearPad(TEENSY_PIN8_IOPORT,  TEENSY_PIN8);    break;
-            case 1: palClearPad(TEENSY_PIN9_IOPORT,  TEENSY_PIN9);    break;
-            case 2: palClearPad(TEENSY_PIN10_IOPORT, TEENSY_PIN10);   break;
-            case 3: palClearPad(TEENSY_PIN11_IOPORT, TEENSY_PIN11);   break;
-            case 4: palClearPad(TEENSY_PIN12_IOPORT, TEENSY_PIN12);   break;
-            case 5: palClearPad(TEENSY_PIN15_IOPORT, TEENSY_PIN15);   break;
-            case 6: palClearPad(TEENSY_PIN16_IOPORT, TEENSY_PIN16);   break;
-            case 7: palClearPad(TEENSY_PIN17_IOPORT, TEENSY_PIN17);   break;
-        }
-
-        if (matrix_debouncing[row] != data) {
-            matrix_debouncing[row] = data;
-            debouncing = true;
-            debouncing_time = timer_read();
-        }
-    }
-
-    if (debouncing && timer_elapsed(debouncing_time) > DEBOUNCE) {
-        for (int row = 0; row < MATRIX_ROWS; row++) {
-            matrix[row] = matrix_debouncing[row];
-        }
-        debouncing = false;
-    }
-    matrix_scan_quantum();
-    return 1;
 }
 
-bool matrix_is_on(uint8_t row, uint8_t col)
+/* Row pin configuration
+ */
+static void unselect_rows(void)
 {
-    return (matrix[row] & (1<<col));
+    palSetPadMode(TEENSY_PIN8_IOPORT,  TEENSY_PIN8,   PAL_MODE_INPUT); // hi-Z
+    palSetPadMode(TEENSY_PIN9_IOPORT,  TEENSY_PIN9,   PAL_MODE_INPUT); // hi-Z
+    palSetPadMode(TEENSY_PIN10_IOPORT, TEENSY_PIN10, PAL_MODE_INPUT); // hi-Z
+    palSetPadMode(TEENSY_PIN11_IOPORT, TEENSY_PIN11, PAL_MODE_INPUT); // hi-Z
+    palSetPadMode(TEENSY_PIN12_IOPORT, TEENSY_PIN12, PAL_MODE_INPUT); // hi-Z
+    palSetPadMode(TEENSY_PIN15_IOPORT, TEENSY_PIN15, PAL_MODE_INPUT); // hi-Z
+    palSetPadMode(TEENSY_PIN16_IOPORT, TEENSY_PIN16, PAL_MODE_INPUT); // hi-Z
+    palSetPadMode(TEENSY_PIN17_IOPORT, TEENSY_PIN17, PAL_MODE_INPUT); // hi-Z
 }
 
-matrix_row_t matrix_get_row(uint8_t row)
+static void select_row(uint8_t row)
 {
-    return matrix[row];
-}
-
-void matrix_print(void)
-{
-    xprintf("\nr/c 01234567\n");
-    for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
-        xprintf("%X0: ", row);
-        matrix_row_t data = matrix_get_row(row);
-        for (int col = 0; col < MATRIX_COLS; col++) {
-            if (data & (1<<col))
-                xprintf("1");
-            else
-                xprintf("0");
-        }
-        xprintf("\n");
+    (void)row;
+    // Output low to select
+    switch (row) {
+        case 0:
+            palSetPadMode(TEENSY_PIN8_IOPORT, TEENSY_PIN8, PAL_MODE_OUTPUT_PUSHPULL);
+            palClearPad(TEENSY_PIN8_IOPORT, TEENSY_PIN8);
+            break;
+        case 1:
+            palSetPadMode(TEENSY_PIN9_IOPORT, TEENSY_PIN9, PAL_MODE_OUTPUT_PUSHPULL);
+            palClearPad(TEENSY_PIN9_IOPORT, TEENSY_PIN9);
+            break;
+        case 2:
+            palSetPadMode(TEENSY_PIN10_IOPORT, TEENSY_PIN10, PAL_MODE_OUTPUT_PUSHPULL);
+            palClearPad(TEENSY_PIN10_IOPORT, TEENSY_PIN10);
+            break;
+        case 3:
+            palSetPadMode(TEENSY_PIN11_IOPORT, TEENSY_PIN11, PAL_MODE_OUTPUT_PUSHPULL);
+            palClearPad(TEENSY_PIN11_IOPORT, TEENSY_PIN11);
+            break;
+        case 4:
+            palSetPadMode(TEENSY_PIN12_IOPORT, TEENSY_PIN12, PAL_MODE_OUTPUT_PUSHPULL);
+            palClearPad(TEENSY_PIN12_IOPORT, TEENSY_PIN12);
+            break;
+        case 5:
+            palSetPadMode(TEENSY_PIN15_IOPORT, TEENSY_PIN15, PAL_MODE_OUTPUT_PUSHPULL);
+            palClearPad(TEENSY_PIN15_IOPORT, TEENSY_PIN15);
+            break;
+        case 6:
+            palSetPadMode(TEENSY_PIN16_IOPORT, TEENSY_PIN16, PAL_MODE_OUTPUT_PUSHPULL);
+            palClearPad(TEENSY_PIN16_IOPORT, TEENSY_PIN16);
+            break;
+        case 7:
+            palSetPadMode(TEENSY_PIN17_IOPORT, TEENSY_PIN17, PAL_MODE_OUTPUT_PUSHPULL);
+            palClearPad(TEENSY_PIN17_IOPORT, TEENSY_PIN17);
+            break;
     }
 }
