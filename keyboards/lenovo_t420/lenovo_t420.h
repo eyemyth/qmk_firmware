@@ -41,7 +41,7 @@
     { k00,   k01,   k02,   k03,   k04, k05,   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, k06, k07,   k08, KC_NO, KC_NO },   \
     { KC_NO, k10,   k11,   KC_NO, k12, KC_NO, k13,   k14,   k15,   k16,   k17,   k18, k19,   k1a, k1b,   k1c },     \
     { k20,   k21,   k22,   k23,   k24, k25,   k26,   k27,   KC_NO, KC_NO, k28,   k29, k2a,   k2b, k2c,   k2d },     \
-    { KC_NO, KC_NO, k30,   KC_NO, k31, k32,   k33,   KC_NO, k34,   KC_NO, k35,   k36, k37,   k38, k39,   k3a },     \
+    { KC_NO, KC_NO, k30,   KC_NO, k31, k32,   k33,   k34,   KC_NO, KC_NO, k35,   k36, k37,   k38, k39,   k3a },     \
     { k40,   KC_NO, KC_NO, KC_NO, k41, k42,   k43,   k44,   KC_NO, KC_NO, k45,   k46, KC_NO, k47, k48,   k49 },     \
     { k50,   k51,   KC_NO, KC_NO, k52, k53,   KC_NO, k54,   KC_NO, KC_NO, k55,   k56, k57,   k58, k59,   KC_NO },   \
     { KC_NO, k60,   k61,   k62,   k63, k64,   k65,   k66,   KC_NO, k67,   k68,   k69, k6a,   k6b, k6c,   k6d },     \
@@ -53,7 +53,7 @@
 /* 8     { RALT     LEFT  DOCR   RIGHT   DOWN    /    xxx  xxx  xxx  xxx  xxx  B   SPACE  N   xxx xxx  }  0 \ */
 /* 9     { xxx      PAUSE DOCL   xxx     PLAY    xxx  .    Z    RSH  RCL  C    V   ENTER  M   ,   X    }  1 \ */
 /* 10    { PRINTSC  END   PDOWN  F12     F11     0    9    1    xxx  xxx  3    4   F10    7   8   2    }  2 \ */
-/* 11    { xxx      xxx   MENU   xxx     MUTE    ;    L    xxx  A    xxx  D    F   \      J   K   S    }  3 \ */
+/* 11    { xxx      xxx   MENU   xxx     MUTE    ;    L    A    xxx  xxx  D    F   \      J   K   S    }  3 \ */
 /* 12    { NUML     xxx   xxx    xxx     VOLUP   P    O    Q    xxx  xxx  E    R   xxx    U   I   W    }  4 \ */
 /* 15    { LALT     UP    xxx    xxx     THINK   '    xxx  ESC  xxx  xxx  F4   G   F5     H   F6  xxx  }  5 \ */
 /* 16    { xxx      HOME  PUP    INSERT  DELETE  -    F8   ~    xxx  LCL  F2   5   f9     6   =   F1   }  6 \ */
