@@ -78,8 +78,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* promising fork of QMK: */
 /* https://github.com/pelrun/qmk_firmware/tree/ps2-port */
 
-#define PS2_CLOCK_PIN A5
-#define PS2_DATA_PIN A4
+/* #define PS2_CLOCK_PIN A5 */
+/* #define PS2_DATA_PIN A4 */
 
 /* I have no idea what I'm doing but this does compile */
 
@@ -89,9 +89,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* TODO: not sure about this stuff */
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
-#define LOCKING_SUPPORT_ENABLE
+/* #define LOCKING_SUPPORT_ENABLE */
 /* Locking resynchronize hack */
-#define LOCKING_RESYNC_ENABLE
+/* #define LOCKING_RESYNC_ENABLE */
 
 /*
  * Force NKRO

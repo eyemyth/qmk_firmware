@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wait.h"
 
 #ifndef DEBOUNCE
-#   define DEBOUNCE 1
+#   define DEBOUNCE 0
 #endif
 
 static uint8_t debouncing = DEBOUNCE;
@@ -89,6 +89,7 @@ uint8_t matrix_scan(void)
             LED_TGL(); // toggle the onboard LED attached to pin 13
         }
         matrix_row_t cols = read_cols();
+
         if (matrix_debouncing[i] != cols) {
             matrix_debouncing[i] = cols;
             if (debouncing) {
@@ -195,8 +196,8 @@ static matrix_row_t read_cols(void)
  */
 static void unselect_rows(void)
 {
-    palSetPadMode(TEENSY_PIN8_IOPORT,  TEENSY_PIN8,   PAL_MODE_INPUT); // hi-Z
-    palSetPadMode(TEENSY_PIN9_IOPORT,  TEENSY_PIN9,   PAL_MODE_INPUT); // hi-Z
+    palSetPadMode(TEENSY_PIN8_IOPORT,  TEENSY_PIN8,  PAL_MODE_INPUT); // hi-Z
+    palSetPadMode(TEENSY_PIN9_IOPORT,  TEENSY_PIN9,  PAL_MODE_INPUT); // hi-Z
     palSetPadMode(TEENSY_PIN10_IOPORT, TEENSY_PIN10, PAL_MODE_INPUT); // hi-Z
     palSetPadMode(TEENSY_PIN11_IOPORT, TEENSY_PIN11, PAL_MODE_INPUT); // hi-Z
     palSetPadMode(TEENSY_PIN12_IOPORT, TEENSY_PIN12, PAL_MODE_INPUT); // hi-Z
