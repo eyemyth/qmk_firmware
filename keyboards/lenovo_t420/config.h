@@ -38,26 +38,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define DEBUG_MATRIX_SCAN_RATE
 
-/*
- * Keyboard Matrix Assignments
- *
- * Change this to how you wired your keyboard
- * COLS: AVR pins used for columns, left to right
- * ROWS: AVR pins used for rows, top to bottom
- * DIODE_DIRECTION: COL2ROW = COL = Anode (+), ROW = Cathode (-, marked on diode)
- *                  ROW2COL = ROW = Anode (+), COL = Cathode (-, marked on diode)
- *
-*/
-/* I'm pretty sure this is replaced with matrix.c */
-/* But these are the pins for at least some modern Lenovo keyboard */
-/* 16 x 8 */
-/* #define MATRIX_ROW_PINS {20,33,24,25,31,32,7,6,26,4,5,3,2,1,21,22} */
-/* #define MATRIX_COL_PINS  {16,10,12,17,11,15,9,8} */
-/* #define UNUSED_PINS */
-
 /* COL2ROW, ROW2COL*/
 #define DIODE_DIRECTION COL2ROW
-
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
 #define DEBOUNCING_DELAY 5
@@ -78,10 +60,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* promising fork of QMK: */
 /* https://github.com/pelrun/qmk_firmware/tree/ps2-port */
 
-/* #define PS2_CLOCK_PIN A5 */
-/* #define PS2_DATA_PIN A4 */
+/* #define PS2_CLOCK_PIN B2 */
+/* #define PS2_DATA_PIN B3 */
 
-/* I have no idea what I'm doing but this does compile */
 
 /* define if matrix has ghost (lacks anti-ghosting diodes) */
 //#define MATRIX_HAS_GHOST

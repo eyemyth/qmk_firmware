@@ -1,12 +1,11 @@
 # lenovo_t420
 
-![lenovo_t420](imgur.com image replace me!)
+![lenovo_t420](https://i.imgur.com/omK0TfY.jpg)
 
-A short description of the keyboard/project
+This is the keyboard from a Thinkpad T420, hooked up to a Teensy 3.2 via [this PCB](https://github.com/thedalles77/USB_Laptop_Keyboard_Controller/blob/master/Example_Keyboards/Lenovo_ThinkPad_T61/Teensy%203p2/Lenovo_Scanner.brd)
 
-Keyboard Maintainer: [Jay Thompson](https://github.com/yourusername)  
-Hardware Supported: The PCBs, controllers supported  
-Hardware Availability: links to where you can find this hardware
+Keyboard Maintainer: [Jay Thompson](https://github.com/eyemyth)  
+Hardware Supported: Teensy 3.2  
 
 Make example for this keyboard (after setting up your build environment):
 
